@@ -1,0 +1,22 @@
+{
+  "name": "taskify",
+  "version": "1.0.0",
+  "description": "A minimal local task management system with user authentication.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mudit67/taskify.git"
+  },
+  "author": "Mudit Bhardwaj",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mudit67/taskify/issues"
+  },
+  "homepage": "https://github.com/mudit67/taskify#readme",
+  "dependencies": {
+    "expressjs": "^1.0.1"
+  }
+}
