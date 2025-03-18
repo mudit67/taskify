@@ -1,6 +1,6 @@
 services:
   taskify:
-    build: .
+    build: ./
     container_name: taskify-con
     ports:
       - "8000:8000"

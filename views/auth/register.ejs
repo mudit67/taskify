@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Taskify</title>
+  </head>
+  <body>
+    <%- include('../components/header') %>
+    <form id="registerForm">
+      <input type="text" name="username" id="username" />
+      <input type="password" name="password" id="password" />
+      <button type="submit">Register</button>
+    </form>
+    <script>
+      const form = document.getElementById("registerForm");
+      form.username.oninput = () => {
+        // console.log("Username change");
+        form.username.setCustomValidity("");
+        form.username.reportValidity();
+      };
+      form.password.oninput = () => {
+        // console.log("Username change");
+        form.username.setCustomValidity("");
+        form.username.reportValidity();
+      };
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        console.log(e.target);
+        const username = e.target.username.value;
+        const password = e.target.password.value;
+        fetch("/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        })
+          .then(async (data) => {
+            const jsonData = await data.json();
+            if (data.status != 200) {
+              throw jsonData.message;
+              // form.username.setCustomValidity(jsonData.message);
+              // form.username.focus();
+              // console.log(jsonData);
+            }
+            return jsonData;
+          })
+          .then((res) => {
+            console.log(res);
+            const cookieString = `token=${res.token}; Path=/;`;
+            // console.log(cookieString);
+            document.cookie = cookieString;
+            window.location.replace("/login");
+          })
+          .catch((err) => {
+            form.username.setCustomValidity(err);
+
+            form.username.reportValidity();
+
+            console.log(err);
+          });
+      };
+    </script>
+  </body>
+</html>
