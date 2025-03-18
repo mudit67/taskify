@@ -9,6 +9,7 @@
       <input type="text" name="username" id="username" />
       <input type="password" name="password" id="password" />
       <button type="submit">Register</button>
+      <a href="/login">Already have an account? Log In.</a>
     </form>
     <script>
       const form = document.getElementById("registerForm");
@@ -49,7 +50,7 @@
             const cookieString = `token=${res.token}; Path=/;`;
             // console.log(cookieString);
             document.cookie = cookieString;
-            window.location.replace("/login");
+            window.location.replace("/");
           })
           .catch((err) => {
             form.username.setCustomValidity(err);

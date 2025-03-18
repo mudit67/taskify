@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Taskify</title>
+  </head>
+  <body>
+    <style>
+      form > * {
+        margin: 0 auto 1rem;
+      }
+    </style>
+    <%- include('./../components/header.ejs') %>
+
+    <form id="addtask">
+      <div>
+        <input
+          type="text"
+          name="title"
+          id="title"
+          placeholder="title"
+          required
+        />
+      </div>
+      <div>
+        <textarea name="desc" id="desc" rows="3" cols="30" required></textarea>
+      </div>
+      <!-- <div>
+        Status:
+        <input type="radio" name="status" id="pending" required />
+        <label for="pending">Pending</label>
+        <input type="radio" name="status" id="completed" />
+        <label for="completed">Completed</label>
+      </div> -->
+      <div>
+        Priority:
+        <input type="radio" name="priority" id="high" required />
+        <label for="high">High</label>
+        <input type="radio" name="priority" id="medium" />
+        <label for="medium">Medium</label>
+        <input type="radio" name="priority" id="low" />
+        <label for="low">Low</label>
+      </div>
+      <button type="submit">Add</button>
+    </form>
+    <script>
+      const taskAddForm = document.getElementById("addtask");
+      taskAddForm.onsubmit = (e) => {
+        e.preventDefault();
+        console.log(e.target);
+        const title = e.target.title.value;
+        const desc = e.target.desc.value;
+        let status;
+        // e.target.status.forEach((i) => {
+        //   if (i.checked) {
+        //     status = i.id;
+        //   }
+        // });
+        let priority;
+        e.target.priority.forEach((i) => {
+          if (i.checked) {
+            priority = i.id;
+          }
+        });
+        console.log(title, desc, status, priority);
+        fetch("/addtask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title, desc, priority }),
+        })
+          .then(async (data) => {
+            const jsonData = await data.json();
+            if (data.status != 200) {
+              throw jsonData.message;
+            }
+            return jsonData;
+          })
+          .then((res) => {
+            console.log(res);
+            window.location.replace("/");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+    </script>
+  </body>
+</html>

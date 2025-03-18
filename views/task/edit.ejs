@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Taskify</title>
+  </head>
+  <body>
+    <style>
+      form > * {
+        margin: 0 auto 1rem;
+      }
+    </style>
+    <%- include('./../components/header.ejs') %>
+
+    <form data-taskID="<%= task.taskID%>" id="addtask">
+      <div>
+        <input
+          type="text"
+          name="title"
+          id="title"
+          placeholder="title"
+          value="<%= task.title %>"
+          required
+        />
+      </div>
+      <div>
+        <textarea name="desc" id="desc" rows="3" cols="30" required>
+<%= task.desc %></textarea
+        >
+      </div>
+      <div>
+        Status:
+        <!--  -->
+        <% if (task.status=="pending") { %>
+        <input type="radio" name="status" id="pending" required checked />
+        <% } else { %>
+        <input type="radio" name="status" id="pending" required />
+        <%}%>
+        <label for="pending">Pending</label>
+        <!--  -->
+        <!--  -->
+        <% if (task.status=="completed") { %>
+        <input type="radio" name="status" id="completed" required checked />
+        <% } else { %>
+        <input type="radio" name="status" id="completed" required />
+        <%}%>
+        <label for="completed">Completed</label>
+      </div>
+      <div>
+        Priority: <% if (task.priority=="high") { %>
+        <input type="radio" name="priority" id="high" required checked />
+        <% } else { %>
+        <input type="radio" name="priority" id="high" required />
+        <%}%>
+        <label for="high">High</label>
+        <!--  -->
+        <% if (task.priority=="medium") { %>
+        <input type="radio" name="priority" id="medium" required checked />
+        <% } else { %>
+        <input type="radio" name="priority" id="medium" required />
+        <%}%>
+        <label for="medium">Medium</label>
+        <!--  -->
+        <% if (task.priority=="low") { %>
+        <input type="radio" name="priority" id="low" required checked />
+        <% } else { %>
+        <input type="radio" name="priority" id="low" required />
+        <%}%>
+        <label for="low">Low</label>
+      </div>
+      <button type="submit">Add</button>
+    </form>
+    <!-- <%%>
+    <script>
+
+      const taskID = <%= task.taskID%>
+    </script>
+    <%%> -->
+    <script>
+      const taskAddForm = document.getElementById("addtask");
+      // console.log(taskAddForm.dataset.taskid);
+      const taskID = taskAddForm.dataset.taskid;
+      taskAddForm.onsubmit = (e) => {
+        e.preventDefault();
+        console.log(e.target);
+        const title = e.target.title.value;
+        const desc = e.target.desc.value;
+        let status;
+        e.target.status.forEach((i) => {
+          if (i.checked) {
+            status = i.id;
+          }
+        });
+        let priority;
+        e.target.priority.forEach((i) => {
+          if (i.checked) {
+            priority = i.id;
+          }
+        });
+        console.log(title, desc, status, priority);
+        fetch("/taskedit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ taskID, title, desc, status, priority }),
+        })
+          .then(async (data) => {
+            const jsonData = await data.json();
+            if (data.status != 200) {
+              throw jsonData.message;
+            }
+            return jsonData;
+          })
+          .then((res) => {
+            console.log(res);
+            window.location.replace("/");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+    </script>
+  </body>
+</html>

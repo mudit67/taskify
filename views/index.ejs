@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Taskify</title>
+  </head>
+  <body>
+    <%- include('./components/header.ejs') %> <% if ( tasks && tasks.length) {%>
+    <% tasks.map(function(task) { %>
+
+    <h2><%= task.title %></h2>
+    <p><%= task.desc %></p>
+    <span
+      ><%= task.status.charAt(0).toUpperCase() + task.status.slice(1) %></span
+    >
+    <span
+      ><%= task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
+      %></span
+    >
+    <div>
+      <span>
+        <% if (task.status=="pending") { %>
+
+        <button
+          data-taskID="<%= task.taskID%>"
+          onclick="handleTaskComplete(event)"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 -960 960 960"
+          >
+            <path d="M400-304 240-464l56-56 104 104 264-264 56 56z" />
+          </svg>
+        </button>
+        <% } else { %>
+        <button
+          data-taskID="<%= task.taskID%>"
+          onclick="handleTaskUncomplete(event)"
+        >
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M12.8536 2.85355C13.0488 2.65829 13.0488 2.34171 12.8536 2.14645C12.6583 1.95118 12.3417 1.95118 12.1464 2.14645L7.5 6.79289L2.85355 2.14645C2.65829 1.95118 2.34171 1.95118 2.14645 2.14645C1.95118 2.34171 1.95118 2.65829 2.14645 2.85355L6.79289 7.5L2.14645 12.1464C1.95118 12.3417 1.95118 12.6583 2.14645 12.8536C2.34171 13.0488 2.65829 13.0488 2.85355 12.8536L7.5 8.20711L12.1464 12.8536C12.3417 13.0488 12.6583 13.0488 12.8536 12.8536C13.0488 12.6583 13.0488 12.3417 12.8536 12.1464L8.20711 7.5L12.8536 2.85355Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+        <%}%>
+        <button
+          data-taskID="<%= task.taskID%>"
+          onclick="handleTaskDelete(event)"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 -960 960 960"
+          >
+            <path
+              d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120zm400-600H280v520h400zM360-280h80v-360h-80zm160 0h80v-360h-80zM280-720v520z"
+            />
+          </svg>
+        </button>
+
+        <a href="/taskedit/<%= task.taskID%>/">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+            />
+          </svg>
+        </a>
+      </span>
+    </div>
+    <% }) %> <%}%>
+    <div>
+      <a href="addtask/">
+        <svg
+          class="w-6 h-6 text-gray-800 dark:text-white"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 12h14m-7 7V5"
+          />
+        </svg>
+      </a>
+    </div>
+    <script>
+      function handleTaskComplete(e) {
+        fetch("/taskedit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            taskID: e.currentTarget.dataset.taskid,
+            status: "completed",
+          }),
+        })
+          .then(async (data) => {
+            const jsonData = await data.json();
+            if (data.status != 200) {
+              throw jsonData.message;
+            }
+            return jsonData;
+          })
+          .then((res) => {
+            console.log(res);
+            window.location.replace("/");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      function handleTaskUncomplete(e) {
+        fetch("/taskedit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            taskID: e.currentTarget.dataset.taskid,
+            status: "pending",
+          }),
+        })
+          .then(async (data) => {
+            const jsonData = await data.json();
+            if (data.status != 200) {
+              throw jsonData.message;
+            }
+            return jsonData;
+          })
+          .then((res) => {
+            console.log(res);
+            window.location.replace("/");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      function handleTaskDelete(e) {
+        fetch("/taskdelete/" + String(e.currentTarget.dataset.taskid), {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // body: JSON.stringify({ taskID, title, desc, status, priority }),
+        })
+          .then(async (data) => {
+            const jsonData = await data.json();
+            if (data.status != 200) {
+              throw jsonData.message;
+            }
+            return jsonData;
+          })
+          .then((res) => {
+            console.log(res);
+            window.location.replace("/");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    </script>
+  </body>
+</html>
