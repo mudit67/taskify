@@ -31,5 +31,14 @@ class Task {
   deleteTask(username, taskID) {
     return Store.deleteTask(username, taskID);
   }
+  tasksDilimited(username, limit, idx) {
+    return Store.tasksDelimited(username, limit, idx);
+  }
+  tasksOfPriority(username, priority) {
+    return Store.tasksOfPriority(username, priority);
+  }
+  tasksWithStatus(username, priority) {
+    return Store.tasksWithStatus(username, priority);
+  }
 }
 module.exports = Task;

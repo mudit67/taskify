@@ -6,8 +6,9 @@ const taskController = require("./controllers/tasksController");
 const authMiddleware = require("./controllers/authMiddleware");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
-const port = process.env.port;
 
+const pageTasksLimit = 1;
+const port = process.env.port;
 const server = expressjs();
 
 server.set("view engine", "ejs");
@@ -44,11 +45,45 @@ server.delete("/taskdelete/:taskID", taskController.deleteTask);
 server.post("/addtask", taskController.addNewTask);
 // server.get("/fetchAllTasks", taskController.getAllTasks);
 
-server.get("/", taskController.getAllTasks, (req, res) => {
+server.get(["/", "/:pageIdx"], taskController.tasksDelimited, (req, res) => {
   // console.log("tasks");
-  // console.log(req.tasks);
-  res.render("index", { tasks: req.tasks });
+  // console.log(req.currentPage);
+  res.render("index", {
+    tasks: req.tasks,
+    prevpage: req.prevpage,
+    nextpage: req.nextpage,
+    currentpage: req.currentPage,
+  });
 });
+server.get(
+  ["/priority/:priority", "/priority/:priority/:pageIdx"],
+  taskController.tasksOfPriority,
+  (req, res) => {
+    // console.log("tasks");
+    // console.log(req.currentPage);
+    res.render("index", {
+      tasks: req.tasks,
+      prevpage: req.prevpage,
+      nextpage: req.nextpage,
+      currentpage: req.currentPage,
+    });
+  }
+);
+
+server.get(
+  ["/status/:status", "/status/:status/:pageIdx"],
+  taskController.tasksWithStatus,
+  (req, res) => {
+    // console.log("tasks");
+    // console.log(req.currentPage);
+    res.render("index", {
+      tasks: req.tasks,
+      prevpage: req.prevpage,
+      nextpage: req.nextpage,
+      currentpage: req.currentPage,
+    });
+  }
+);
 
 server.listen(port, () => {
   console.log(`Server listening to port: ${port}`);

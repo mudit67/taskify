@@ -46,7 +46,7 @@
       const taskAddForm = document.getElementById("addtask");
       taskAddForm.onsubmit = (e) => {
         e.preventDefault();
-        console.log(e.target);
+        // console.log(e.target);
         const title = e.target.title.value;
         const desc = e.target.desc.value;
         let status;
@@ -61,7 +61,7 @@
             priority = i.id;
           }
         });
-        console.log(title, desc, status, priority);
+        // console.log(title, desc, status, priority);
         fetch("/addtask", {
           method: "POST",
           headers: {
@@ -77,7 +77,7 @@
             return jsonData;
           })
           .then((res) => {
-            console.log(res);
+            // console.log(res);
             window.location.replace("/");
           })
           .catch((err) => {

@@ -25,7 +25,7 @@
       };
       form.onsubmit = (e) => {
         e.preventDefault();
-        console.log(e.target);
+        // console.log(e.target);
         const username = e.target.username.value;
         const password = e.target.password.value;
         fetch("/login", {
@@ -46,7 +46,7 @@
             return jsonData;
           })
           .then((res) => {
-            console.log(res);
+            // console.log(res);
             const cookieString = `token=${res.token}; Path=/;`;
             // console.log(cookieString);
             document.cookie = cookieString;

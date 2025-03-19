@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 // const
 const authController = {
   register: async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const { username, password } = req.body;
     if (!username.length || !password.length) {
       return res
@@ -31,7 +31,7 @@ const authController = {
     }
   },
   login: async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const { username, password } = req.body;
     if (!username.length || !password.length) {
       return res

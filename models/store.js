@@ -21,6 +21,18 @@ class Store {
     }
     return [];
   }
+  tasksDelimited(username, limit, idx) {
+    const taskArray = this.tasks[username];
+    if (!taskArray || taskArray.length == 0) {
+      return { tasks: [], remaining: 0 };
+    }
+    let start = (idx - 1) * limit;
+    // console.log(taskArray, start, start + limit);
+    return {
+      tasks: taskArray.slice(start, start + limit),
+      remaining: taskArray.length - (start + limit),
+    };
+  }
   taskByTaskId(username, taskID) {
     if (this.tasks[username] && this.tasks[username].length) {
       return this.tasks[username].find((task) => task.taskID == taskID);
@@ -31,8 +43,61 @@ class Store {
     if (this.tasks[username] == undefined || this.tasks[username].length == 0) {
       this.tasks[username] = [taskObj];
     } else {
-      this.tasks[username].push(taskObj);
+      if (taskObj.priority == "low") {
+        return this.tasks[username].push(taskObj);
+      }
+      let taskIdx;
+      if (taskObj.priority == "medium") {
+        taskIdx = this.tasks[username].findIndex(
+          (task) => task.priority == "low"
+        );
+        if (taskIdx == -1) {
+          taskIdx = this.tasks[username].findLastIndex(
+            (task) => task.priority == "medium"
+          );
+          if (taskIdx != -1) {
+            taskIdx += 1;
+          } else {
+            taskIdx = this.tasks[username].length;
+          }
+        }
+      } else {
+        taskIdx = this.tasks[username].findLastIndex(
+          (task) => task.priority == "high"
+        );
+        if (taskIdx != -1) {
+          taskIdx += 1;
+        } else {
+          taskIdx = 0;
+        }
+      }
+      return this.tasks[username].splice(taskIdx, 0, taskObj);
     }
+  }
+  tasksOfPriority(username, priority) {
+    const taskArray = this.tasks[username];
+    if (!taskArray || taskArray.length == 0) {
+      return [];
+    }
+    let start = 0,
+      end = taskArray.length;
+    if (priority == "high") {
+      end = taskArray.findLastIndex((task) => task.priority == "high") + 1;
+    } else if (priority == "medium") {
+      start = taskArray.findIndex((task) => task.priority == priority);
+      end = taskArray.findLastIndex((task) => task.priority == priority) + 1;
+    } else {
+      start = taskArray.findIndex((task) => task.priority == priority);
+    }
+    // console.log(taskArray, start, end);
+    return taskArray.slice(start, end);
+  }
+  tasksWithStatus(username, status) {
+    const taskArray = this.tasks[username];
+    if (!taskArray || taskArray.length == 0) {
+      return [];
+    }
+    return taskArray.filter((task) => task.status == status);
   }
   editTask(username, task) {
     console.log("Edit Task: ");
