@@ -90,6 +90,9 @@ class Store {
       start = taskArray.findIndex((task) => task.priority == priority);
     }
     // console.log(taskArray, start, end);
+    if (start == -1 || end == -1) {
+      return [];
+    }
     return taskArray.slice(start, end);
   }
   tasksWithStatus(username, status) {
